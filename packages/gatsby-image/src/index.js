@@ -82,7 +82,8 @@ const noscriptImg = props => {
   const height = props.height ? `height="${props.height}" ` : ``
   const opacity = props.opacity ? props.opacity : `1`
   const transitionDelay = props.transitionDelay ? props.transitionDelay : `0.5s`
-  return (`<picture>${srcSetWebp}${srcSet}<img ${width}${height}${src}${alt}${title}style="position:absolute;top:0;left:0;transition:opacity 0.5s;transition-delay:${transitionDelay};opacity:${opacity};width:100%;height:100%;object-fit:cover;object-position:center"/></picture>`)
+  const crossOrigin = props.crossOrigin ? `crossorigin="${props.crossOrigin}" ` : ``
+  return (`<picture>${srcSetWebp}${srcSet}<img ${width}${height}${src}${alt}${title}${crossOrigin}style="position:absolute;top:0;left:0;transition:opacity 0.5s;transition-delay:${transitionDelay};opacity:${opacity};width:100%;height:100%;object-fit:cover;object-position:center"/></picture>`)
 }
 
 const Img = React.forwardRef((props, ref) => {
@@ -299,6 +300,7 @@ class Image extends React.Component {
                   ref={this.imageRef}
                   onLoad={this.handleImageLoaded}
                   onError={this.props.onError}
+                  crossOrigin={this.props.crossOrigin}
                 />
               </picture>
             )}
@@ -385,6 +387,7 @@ class Image extends React.Component {
                 ref={this.imageRef}
                 onLoad={this.handleImageLoaded}
                 onError={this.props.onError}
+                crossOrigin={this.props.crossOrigin}
               />
             </picture>
           )}
@@ -449,6 +452,7 @@ Image.propTypes = {
   title: PropTypes.string,
   alt: PropTypes.string,
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.object]), // Support Glamor's css prop.
+  crossOrigin: PropTypes.string,
   critical: PropTypes.bool,
   style: PropTypes.object,
   imgStyle: PropTypes.object,
