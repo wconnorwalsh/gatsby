@@ -6,6 +6,8 @@ const express = require(`express`)
 const getConfigFile = require(`../bootstrap/get-config-file`)
 const preferDefault = require(`../bootstrap/prefer-default`)
 const chalk = require(`chalk`)
+const getSslCert = require(`../utils/get-ssl-cert`)
+const { createServer } = require(`https`)
 
 module.exports = async program => {
   let { prefixPaths, port, open } = program
@@ -31,8 +33,17 @@ module.exports = async program => {
   })
   app.use(pathPrefix, router)
 
-  const server = app.listen(port, () => {
-    let openUrlString = `http://localhost:${port}${pathPrefix}`
+  if (program.https) {
+    program.ssl = await getSslCert({
+      name: program.sitePackageJson.name,
+      certFile: program[`cert-file`],
+      keyFile: program[`key-file`],
+      directory: program.directory,
+    })
+  }
+
+  let report = protocol => {
+    let openUrlString = `${protocol}://localhost:${port}${pathPrefix}`
     console.log(
       `${chalk.blue(`info`)} gatsby serve running at: ${chalk.bold(
         openUrlString
@@ -48,7 +59,15 @@ module.exports = async program => {
         )
       )
     }
-  })
+  }
+
+  let server
+
+  if (program.ssl) {
+    server = createServer(program.ssl, app).listen(port, report(`https`))
+  } else {
+    server = app.listen(port, report(`http`))
+  }
 
   signalExit((code, signal) => {
     server.close()
