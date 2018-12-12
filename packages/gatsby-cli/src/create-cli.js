@@ -201,6 +201,11 @@ function buildLocalCommands(cli, isLocalSite) {
           type: `boolean`,
           describe: `Open the site in your (default) browser for you.`,
         })
+        .option(`S`, {
+          alias: `https`,
+          type: `boolean`,
+          describe: `Use HTTPS. See https://www.gatsbyjs.org/docs/local-https/ as a guide`,
+        })
         .option(`prefix-paths`, {
           type: `boolean`,
           default: false,
